@@ -1,6 +1,5 @@
 #!/bin/bash 
 
-
 MYSRCDIR=$( cd -P $(dirname ${BASH_SOURCE[0]}); echo $PWD )
 export VIRTDIR=$MYSRCDIR/PY27
 
