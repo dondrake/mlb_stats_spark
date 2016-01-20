@@ -1,6 +1,9 @@
 # mlb_stats_spark
 Set of Spark applications that download MLB events and statistics for creating a fantasy baseball predictive model
 
+# MORE TO COME
++ This is a work in progress as I migrate code from my private repo to this public Apache licensed open source project.
+
 # Requirements
 + Simply download a pre-compiled version of Spark from http://spark.apache.org/downloads.html  Spark 1.5.2 and Spark 1.6 should work just fine.
 + Pyspark is utilized, and Python v2.7.x is supported. No plans at this time to support Python 3.x.
