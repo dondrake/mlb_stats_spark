@@ -37,7 +37,7 @@ class DownloadMLB(object):
 
     WEB_ROOT = 'http://gd2.mlb.com/components/game/mlb/'
 
-    cache=os.path.expanduser('~') + '/fd.mlb/spark.mlb.com/'
+    cache=os.path.expanduser('~') + '/spark_mlb/spark.mlb.com/'
 
     def __init__(self, begin=None, end=None):
         self.begin=begin
