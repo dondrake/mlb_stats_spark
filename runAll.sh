@@ -16,3 +16,12 @@ if [[ $RETVAL -gt 0 ]]; then
 fi
 
 /bin/date
+echo "running createStats.sh"
+$SRCDIR/createStats.sh
+RETVAL=$?
+if [[ $RETVAL -gt 0 ]]; then
+    echo "createStats.sh failed."
+    exit 1
+fi
+
+/bin/date
