@@ -25,3 +25,12 @@ if [[ $RETVAL -gt 0 ]]; then
 fi
 
 /bin/date
+echo "running updateWeather.sh"
+$SRCDIR/updateWeather.sh
+RETVAL=$?
+if [[ $RETVAL -gt 0 ]]; then
+    echo "updateWeather.sh failed."
+    exit 1
+fi
+
+/bin/date
