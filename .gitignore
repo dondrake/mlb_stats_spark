@@ -58,3 +58,6 @@ docs/_build/
 # PyBuilder
 target/
 PY27/
+metastore_db/
+weather.out
+weather.err
