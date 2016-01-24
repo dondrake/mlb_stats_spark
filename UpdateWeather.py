@@ -88,14 +88,18 @@ class UpdateWeather(object):
             #self.weather = self.weather.filter(self.weather["game_id"] != 'gid_2015_06_15_chamlb_pitmlb_1')
             self.weather.registerTempTable("weather")
             self.weather.cache()
+        else:
+            self.weather = sqlContext.createDataFrame(sc.emptyRDD(), Weather.schema)
+            self.weather.registerTempTable("weather")
+            self.weather.cache()
 
     def getGamesToUpdate(self):
         if self.weatherExists:
+            #order by g.game_time_et desc  \
             games = self.sqlContext.sql("select distinct * from (select g.game_id, g.game_time_et, s.latitude, s.longitude, s.has_dome, s.center_azimuth  \
                 from games g join stadium s ON (g.stadium_id = s.stadium_id) \
                 left outer join weather w on (g.game_id = w.game_id) \
                 where  w.game_id is null \
-                order by g.game_time_et desc  \
                 UNION ALL\
                 select g.game_id, g.game_time_et, s.latitude, s.longitude, s.has_dome, s.center_azimuth  \
                 from games g join stadium s ON (g.stadium_id = s.stadium_id) \
