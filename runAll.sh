@@ -34,3 +34,12 @@ if [[ $RETVAL -gt 0 ]]; then
 fi
 
 /bin/date
+echo "running movingAverage.sh"
+$SRCDIR/movingAverage.sh
+RETVAL=$?
+if [[ $RETVAL -gt 0 ]]; then
+    echo "movingAverage.sh failed."
+    exit 1
+fi
+
+/bin/date
