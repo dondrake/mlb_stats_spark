@@ -17,6 +17,6 @@ Set of Spark applications that download MLB events and statistics for creating a
   + createStats.sh - recreates all player-level statistics from GameEvents downloaded 
     + generates both JSON datasets and Parquet datasets
   + updateWeather.sh - Downloads weather data for Games from developer.forecast.io. For games in the future, it will get the forecast.
-  + movingAverage.sh - COMING SOON
-  + encode.sh - COMING SOON
-  + runml.sh - COMING SOON
+  + movingAverage.sh - Computes multiple moving averages for numerous features
+  + encode.sh - Encode categorical variables
+  + runml.sh - Run the Spark GradientBoostedTreesModel
