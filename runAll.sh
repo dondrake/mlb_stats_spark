@@ -43,3 +43,21 @@ if [[ $RETVAL -gt 0 ]]; then
 fi
 
 /bin/date
+echo "running encode.sh"
+$SRCDIR/encode.sh
+RETVAL=$?
+if [[ $RETVAL -gt 0 ]]; then
+    echo "encode.sh failed."
+    exit 1
+fi
+
+/bin/date
+echo "running runml.sh"
+$SRCDIR/runml.sh
+RETVAL=$?
+if [[ $RETVAL -gt 0 ]]; then
+    echo "runml.sh failed."
+    exit 1
+fi
+
+/bin/date
