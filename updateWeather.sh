@@ -12,7 +12,7 @@ time spark-submit  \
 --packages com.databricks:spark-csv_2.10:1.3.0 \
 --conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \
 --conf "spark.eventLog.enabled=true" \
---conf "spark.eventLog.dir=file:///Users/drake/spark-events" \
+--conf "spark.eventLog.dir=$EVENT_LOG_DIR" \
 --conf "spark.storage.memoryFraction=0.9" \
 --conf "spark.local.dir=$LOCALDIR" \
 --py-files $SRCDIR/Game.py \
