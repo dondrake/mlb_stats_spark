@@ -194,6 +194,8 @@ class GameEvents(RDDBuilder):
                             continue
                         elif event['event'] == 'Batter Turn':
                             continue
+                        elif event['event'] == 'Pitcher Switch':
+                            continue
                         elif event['event'] == 'Manager Review':
                             print "? Manager Review", event['des']
                             continue
