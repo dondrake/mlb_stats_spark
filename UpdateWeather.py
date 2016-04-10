@@ -207,7 +207,13 @@ class UpdateWeather(object):
                     w.ozone = self.domeVal['ozone']
             else:
                 val = forecastio.load_forecast(self._api_key, game.latitude, game.longitude, time, units='us').currently()
-                print "val=", val
+                try:
+                    print "game=", str(game)
+                    print "val=", val
+                except Exception as e:
+                    print e
+                    print "ERROR: Can't get weather for game" + str(game)
+                    continue
                 w.icon = val.icon
                 w.temperature = val.temperature
                 try:
