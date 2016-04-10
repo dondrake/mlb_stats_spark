@@ -11,7 +11,7 @@ time spark-submit  \
 --verbose \
 --master local[*] \
 --driver-memory 9G \
---packages com.databricks:spark-csv_2.10:1.3.0 \
+--packages com.databricks:spark-csv_2.10:1.4.0 \
 --conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \
 --conf "spark.eventLog.enabled=true" \
 --conf "spark.eventLog.dir=$EVENT_LOG_DIR" \
