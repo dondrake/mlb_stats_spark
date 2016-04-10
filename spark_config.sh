@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # EDIT THE VARIABLES BELOW TO MATCH YOUR SETUP
-SPARK_HOME=~/spark/spark-1.6.0-bin-hadoop2.6
+SPARK_HOME=~/spark/spark-1.6.1-bin-hadoop2.6
 export PATH=$SPARK_HOME/bin:$PATH
 
 # Used to store the results of the Spark WebUI after
