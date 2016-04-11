@@ -15,7 +15,6 @@ time spark-submit  \
 --conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \
 --conf "spark.eventLog.enabled=true" \
 --conf "spark.eventLog.dir=$EVENT_LOG_DIR" \
---conf "spark.storage.memoryFraction=0.9" \
 --conf "spark.local.dir=$LOCALDIR" \
 --py-files $SRCDIR/AbstractDF.py,$SRCDIR/Game.py,$SRCDIR/GameEvents.py,$SRCDIR/BattingStats.py,$SRCDIR/PitchingStats.py,$SRCDIR/GamePlayers.py \
 $SRCDIR/MovingAverage.py 

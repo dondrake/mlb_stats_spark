@@ -13,7 +13,6 @@ time spark-submit  \
 --conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \
 --conf "spark.eventLog.enabled=true" \
 --conf "spark.eventLog.dir=$EVENT_LOG_DIR" \
---conf "spark.storage.memoryFraction=0.9" \
 --conf "spark.local.dir=$LOCALDIR" \
 --py-files $SRCDIR/Game.py \
 $SRCDIR/UpdateWeather.py > $SRCDIR/weather.out 2> $SRCDIR/weather.err

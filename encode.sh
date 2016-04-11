@@ -13,7 +13,6 @@ time spark-submit  \
 --conf "spark.eventLog.enabled=true" \
 --conf "spark.eventLog.dir=$EVENT_LOG_DIR" \
 --conf "spark.local.dir=$LOCALDIR" \
---conf "spark.storage.memoryFraction=0.9" \
 --py-files $SRCDIR/CreateStatsRDD.py \
 $SRCDIR/EncodeCategorical.py 
 RETVAL=$?

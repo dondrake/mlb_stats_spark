@@ -133,10 +133,10 @@ def trainTestSaveFDPointsModel(rddDir, encodedFeaturesParq, featuresNumValsFile)
     predictor = 'fd_points'
     not_features.extend(predictor)
     # Load and parse the data file.
-    features = sqlContext.parquetFile(encodedFeaturesParq).cache()
+    features = sqlContext.read.parquet(encodedFeaturesParq).cache()
     print features.take(3)
     print "# features=", features.count()
-    numVals = sqlContext.jsonFile(featuresNumValsFile).take(1)[0].asDict()
+    numVals = sqlContext.read.json(featuresNumValsFile).take(1)[0].asDict()
     (catFeatures, featureLookup) = getCatFeatures(features, numVals)
     all_fd_points_df = None
     fd_points_testData = None
@@ -166,7 +166,7 @@ def trainTestSaveFDPointsModel(rddDir, encodedFeaturesParq, featuresNumValsFile)
     predictions = model.predict(testData.map(lambda x: x.features)).cache()
     print "# predictions=", predictions.count()
     labelsAndPredictions = testData.map(lambda lp: lp.label).zip(predictions)
-    fd_points_testData = f_testData.map(lambda x: (str(x.player_id) + '_' + x.game_id, x.fd_points)).toDF(['player_id', 'actual_fd_points']).coalesce(50)
+    fd_points_testData = f_testData.map(lambda x: (str(x.player_id) + '_' + x.game_id, x.fd_points or 0.0)).toDF(['player_id', 'actual_fd_points']).coalesce(50)
 
     testMSE = labelsAndPredictions.map(lambda (v, p): (v - p) * (v - p)).sum() / float(testData.count())
     testMAE = labelsAndPredictions.map(lambda (v, p): abs(v - p)).sum() / float(testData.count())
@@ -210,10 +210,10 @@ def trainTestSaveALLModel(rddDir, encodedFeaturesParq, featuresNumValsFile):
         predictors = pitcherPredictors
     not_features.extend(predictors)
     # Load and parse the data file.
-    features = sqlContext.parquetFile(encodedFeaturesParq).cache()
+    features = sqlContext.read.parquet(encodedFeaturesParq).cache()
     print features.take(3)
     print "# features=", features.count()
-    numVals = sqlContext.jsonFile(featuresNumValsFile).take(1)[0].asDict()
+    numVals = sqlContext.read.json(featuresNumValsFile).take(1)[0].asDict()
     (catFeatures, featureLookup) = getCatFeatures(features, numVals)
     all_fd_points_df = None
     fd_points_testData = None
