@@ -79,7 +79,7 @@ def rmTree(dirname):
 
 
 def encodeRDD(sqlContext, srcFile, encFile, numValFile, encodeList, useJSON, json_val_filename):
-    rdd = sqlContext.parquetFile(srcFile)
+    rdd = sqlContext.read.parquet(srcFile)
 
     ec = EncodeCategorical(sqlContext, rdd, encodeList, useJSON, json_val_filename)
     (newrdd, numVals) = ec.convert()

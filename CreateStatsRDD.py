@@ -142,12 +142,12 @@ class CreateStatsRDD(object):
 
     def createHitterStats(self, sqlContext):
         # create Hitter Stats
-        gameEvents = sqlContext.parquetFile(self.rddDir + "/" + GameEvents.table_name + ".parquet")
+        gameEvents = sqlContext.read.parquet(self.rddDir + "/" + GameEvents.table_name + ".parquet")
         gameEvents.registerTempTable("game_events")
         gameEvents.cache()
         print "gameEvents=", gameEvents
 
-        games = sqlContext.parquetFile(self.rddDir + "/" + Games.table_name + ".parquet")
+        games = sqlContext.read.parquet(self.rddDir + "/" + Games.table_name + ".parquet")
         games.registerTempTable("games")
         games.cache()
         print "games=", gameEvents
@@ -179,12 +179,12 @@ class CreateStatsRDD(object):
         return batter_games
 
     def createPitcherStats(self, sqlContext):
-        games = sqlContext.parquetFile(self.rddDir + "/" + Games.table_name + ".parquet")
+        games = sqlContext.read.parquet(self.rddDir + "/" + Games.table_name + ".parquet")
         games.registerTempTable("games")
         games.cache()
         print "games=", games
 
-        pitching_stats = sqlContext.parquetFile(self.rddDir + "/" + PitchingStats.table_name + ".parquet") 
+        pitching_stats = sqlContext.read.parquet(self.rddDir + "/" + PitchingStats.table_name + ".parquet") 
         pitching_stats.registerTempTable("pitching_stats")
         pitching_stats.cache()
 

@@ -82,7 +82,7 @@ class UpdateWeather(object):
         self.weatherExists = os.path.exists(self.weatherFile)
         
         if self.weatherExists:
-            self.weather = sqlContext.jsonFile(self.weatherFile, schema=Weather.schema)
+            self.weather = sqlContext.read.json(self.weatherFile, schema=Weather.schema)
             #temp filter
             #self.weather = self.weather.filter(self.weather["game_time_et"] < '2015-06-20 00:00:00')
             #self.weather = self.weather.filter(self.weather["game_id"] != 'gid_2015_06_15_chamlb_pitmlb_1')
@@ -282,7 +282,7 @@ if __name__ == '__main__':
     #sqlContext = SQLContext(sc)
     sqlContext = HiveContext(sc)
 
-    games = sqlContext.parquetFile(CreateStatsRDD.rddDir + "/" + Games.table_name + ".parquet")
+    games = sqlContext.read.parquet(CreateStatsRDD.rddDir + "/" + Games.table_name + ".parquet")
     games.registerTempTable("games")
     games.cache()
     print "games=", games

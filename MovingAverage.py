@@ -243,7 +243,7 @@ class MovingAverage(object):
         pg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         pg.registerTempTable("player_games")
 
-        games = sqlContext.parquetFile(CreateStatsRDD.rddDir + "/" + Games.table_name + ".parquet")
+        games = sqlContext.read.parquet(CreateStatsRDD.rddDir + "/" + Games.table_name + ".parquet")
         games.registerTempTable("games")
         
         gameDates = sqlContext.sql("select distinct game_date from games ").map(lambda x: x[0]).coalesce(8).collect()
@@ -428,12 +428,12 @@ class CreateFeatures(object):
 
     def createBatterFeatures(self, sqlContext, games, gamePlayers, stadium, weather):
 
-        batter_mov_avg = sqlContext.parquetFile(self.rddDir + "/" + "batter_moving_averages.parquet")
+        batter_mov_avg = sqlContext.read.parquet(self.rddDir + "/" + "batter_moving_averages.parquet")
         batter_mov_avg.registerTempTable("bma")
         batter_mov_avg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         print "batter_mov_avg=", batter_mov_avg.take(2)
 
-        bg = sqlContext.parquetFile(self.rddDir + "/batter_games.parquet")
+        bg = sqlContext.read.parquet(self.rddDir + "/batter_games.parquet")
         bg.registerTempTable("bg")
         bg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
 
@@ -523,12 +523,12 @@ class CreateFeatures(object):
 
     def createPitcherFeatures(self, sqlContext, games, gamePlayers, stadium, weather):
 
-        pitcher_mov_avg = sqlContext.parquetFile(self.rddDir + "/" + "pitcher_moving_averages.parquet")
+        pitcher_mov_avg = sqlContext.read.parquet(self.rddDir + "/" + "pitcher_moving_averages.parquet")
         pitcher_mov_avg.registerTempTable("pma")
         pitcher_mov_avg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         print "pitcher_mov_avg=", pitcher_mov_avg.take(2)
 
-        pg = sqlContext.parquetFile(self.rddDir + "/" + "pitcher_games.parquet")
+        pg = sqlContext.read.parquet(self.rddDir + "/" + "pitcher_games.parquet")
         pg.registerTempTable("pg")
         pg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
 
@@ -580,7 +580,7 @@ class CreateFeatures(object):
         # pitching_features can't save to CSV directly, it causes the python process
         # to die without an error message
         # For now, just re-read the parquet and save it
-        pcsv = sqlContext.parquetFile(self.rddDir + "/" + "pitching_features.parquet").rdd.coalesce(1).toDF()
+        pcsv = sqlContext.read.parquet(self.rddDir + "/" + "pitching_features.parquet").rdd.coalesce(1).toDF()
         print "pcsv count=", pcsv.count()
         print "pcsv rows=", pcsv.take(4)
         self.rmtree(self.rddDir + "/" + "pitching_features.csv")
@@ -593,13 +593,13 @@ class CreateFeatures(object):
 
     def run(self):
         
-        games = sqlContext.parquetFile(self.rddDir + "/" + Games.table_name + ".parquet")
+        games = sqlContext.read.parquet(self.rddDir + "/" + Games.table_name + ".parquet")
         games.registerTempTable("games")
         games.cache()
         print "games=", games
         print games.take(2)
 
-        gamePlayers = sqlContext.parquetFile(self.rddDir + "/" + "game_players.parquet")
+        gamePlayers = sqlContext.read.parquet(self.rddDir + "/" + "game_players.parquet")
         gamePlayers.registerTempTable("game_players")
         gamePlayers.cache()
 
@@ -607,7 +607,7 @@ class CreateFeatures(object):
         stadium.registerTempTable("stadium")
         stadium.cache()
 
-        weather = sqlContext.jsonFile(UpdateWeather.weatherFile, schema=Weather.schema)
+        weather = sqlContext.read.json(UpdateWeather.weatherFile, schema=Weather.schema)
         weather.registerTempTable("weather")
         weather.cache()
 
