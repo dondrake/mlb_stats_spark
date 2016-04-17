@@ -148,6 +148,8 @@ class CreateStatsRDD(object):
         print "gameEvents=", gameEvents
 
         games = sqlContext.read.parquet(self.rddDir + "/" + Games.table_name + ".parquet")
+        # don't include postponed, preview or cancelled  games
+        games = games.filter((games['game_status'] == 'Final') | (games['game_status'] == 'Completed Early'))
         games.registerTempTable("games")
         games.cache()
         print "games=", gameEvents
@@ -180,6 +182,8 @@ class CreateStatsRDD(object):
 
     def createPitcherStats(self, sqlContext):
         games = sqlContext.read.parquet(self.rddDir + "/" + Games.table_name + ".parquet")
+        # don't include postponed, preview or cancelled  games
+        games = games.filter((games['game_status'] == 'Final') | (games['game_status'] == 'Completed Early'))
         games.registerTempTable("games")
         games.cache()
         print "games=", games

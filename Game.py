@@ -12,6 +12,7 @@ class Game(AbstractDF):
         StructField("game_date", DateType()),
         StructField("game_year", IntegerType()),
         StructField("game_type", StringType()),
+        StructField("game_status", StringType()),
         StructField("home_time", StringType()),
         StructField("game_pk", IntegerType()),
         StructField("gameday_sw", StringType()),
@@ -39,7 +40,7 @@ class Game(AbstractDF):
         StructField("modified", TimestampType()),
         ],
     key = lambda x: x.name))
-    skipSelectFields = ['game_type', 'modified']
+    skipSelectFields = ['game_type', 'modified', 'game_status']
 
 class Games(RDDBuilder):
     table_name = "games"
@@ -67,6 +68,7 @@ class Games(RDDBuilder):
         g.game_date = self.gameDate
         g.game_year = self.gameDate.year
         g.game_type = data['game_type']
+        g.game_status = data['status']
         g.home_time = data['home_time']
         g.game_pk = data['game_pk']
         g.gameday_sw = data['gameday_sw']
