@@ -119,13 +119,15 @@ def calcGroup(tuple):
     var = np.var(a, axis=0)
     l1norm = np.linalg.norm(a, ord=1, axis=0)
     l2norm = np.linalg.norm(a, ord=2, axis=0)
+    # coefficient of variation 
+    cov = np.std(a, axis=0) / np.std(a, axis=0)
     #print "****"
 
     metrics = {}
     metrics['player_id'] = int(playerId)
     metrics['game_date'] = datetime.strptime(gdate, '%Y%m%d').date()
     #for agg in ((avg, 'avg'), (std, 'std') ):
-    for agg in ((avg, 'avg'), (std, 'std'), (var, 'var'), (l1norm, 'l1norm'), (l2norm, 'l2norm')):
+    for agg in ((avg, 'avg'), (std, 'std'), (var, 'var'), (l1norm, 'l1norm'), (l2norm, 'l2norm'), (cov, 'cov')):
         index = 0
         for f in movingLength.playerStats:
             field = 'mv_' + movingLen + '_' + agg[1] + '_' + f
@@ -240,13 +242,12 @@ class MovingAverage(object):
 
         print "loading player_games_dir = ", CreateStatsRDD.rddDir + "/" + self.player_games_dir
         pg = sqlContext.load(CreateStatsRDD.rddDir + "/" + self.player_games_dir)
-        pg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         pg.registerTempTable("player_games")
 
         games = sqlContext.read.parquet(CreateStatsRDD.rddDir + "/" + Games.table_name + ".parquet")
         games.registerTempTable("games")
         
-        gameDates = sqlContext.sql("select distinct game_date from games ").map(lambda x: x[0]).coalesce(8).collect()
+        gameDates = sqlContext.sql("select distinct game_date from games ").map(lambda x: x[0]).collect()
         print "len gameDates=", len(gameDates)
         print "gameDates=", gameDates
         yeargames = defaultdict(list)
@@ -266,32 +267,26 @@ class MovingAverage(object):
         sql = "select * from player_games "
         print "sql=", sql
         playerStats = sqlContext.sql(sql)
-        playerStats.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
 
         #print "count=", playerStats.count()
         #print playerStats.take(10)
-        p = playerStats.flatMap(pitcherRowToObj).repartition(20).persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
+        p = playerStats.flatMap(pitcherRowToObj)
         #p = playerStats.flatMap(pitcherRowToObj).persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         #print "2count=", p.count()
         #print p.take(10)
         
         # reduceByKey here??
-        g = p.groupByKey().persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
+        g = p.groupByKey()
         #print "gcount=", g.count()
         #print g.take(10)
 
-        s = g.map(calcGroup).persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
+        s = g.map(calcGroup)
         #print "scount=", s.count()
         #print s.take(10)
 
-        t = s.reduceByKey(mergeMetrics).values().persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
+        t = s.reduceByKey(mergeMetrics).values()
         print "t="
         print t.take(10)
-
-        pg.unpersist()
-        p.unpersist()
-        g.unpersist()
-        s.unpersist()
 
         # TODO
         # create the schema here
@@ -430,12 +425,10 @@ class CreateFeatures(object):
 
         batter_mov_avg = sqlContext.read.parquet(self.rddDir + "/" + "batter_moving_averages.parquet")
         batter_mov_avg.registerTempTable("bma")
-        batter_mov_avg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         print "batter_mov_avg=", batter_mov_avg.take(2)
 
         bg = sqlContext.read.parquet(self.rddDir + "/batter_games.parquet")
         bg.registerTempTable("bg")
-        bg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
 
         batter_games = sqlContext.sql("select *  \
             from games g    \
@@ -451,30 +444,10 @@ class CreateFeatures(object):
             where gp.fd_position != 'P' \
         ")
 
-        test_sql = sqlContext.sql("select *  \
-            from stadium \
-")
-#            from games g    \
-#            join stadium on (g.stadium_id = stadium.stadium_id) \
-#            join game_players gp on (g.game_date >= gp.effective_start_dt \
-#                and g.game_date < gp.effective_stop_dt \
-#                and (g.home_team_id = gp.team_id or g.away_team_id = gp.team_id) ) \
-#            join bma on (g.game_date = bma.game_date \
-#                and gp.player_id = bma.player_id ) \
-#            join weather w on (g.game_id = w.game_id) \
-#            left outer join bg on (g.game_id = bg.game_id \
-#                and gp.player_id = bg.player_id and bg.player_id = bma.player_id ) \
-#            where gp.fd_position != 'P' \
-#        ")
-
-        print "test_sql schema=", test_sql.printSchema()
-        c = test_sql.count()
-        print "test_sql count = ", c
-        print "test_sql = ", test_sql.collect
         print "batter_games schema=", batter_games.printSchema()
         print "columns=", batter_games.columns
-        c = batter_games.count()
-        print "batter_games count=", c,  " "
+        #c = batter_games.count()
+        #print "batter_games count=", c,  " "
         unique_cols = []
         unique_cols.extend(Game().getSelectFields(games))
         unique_cols.extend(GamePlayer().getSelectFields(gamePlayers))
@@ -503,7 +476,6 @@ class CreateFeatures(object):
         batting_features = batting_features.map(transformBatters).coalesce(16)
         print "batting_features take=", batting_features.take(10)
         batting_features = sqlContext.createDataFrame(batting_features, schema=None, samplingRatio=0.4)
-        batting_features.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         print "batting_features.schema=", batting_features.printSchema()
         print "batting_features=", batting_features.show()
 
@@ -517,20 +489,15 @@ class CreateFeatures(object):
         with open(self.rddDir + "/" + "batting_features.csv/_header", "w") as text_file:
             text_file.write(",".join(bcsv.columns))
 
-        batting_features.unpersist()
-        batter_mov_avg.unpersist()
-        bg.unpersist()
 
     def createPitcherFeatures(self, sqlContext, games, gamePlayers, stadium, weather):
 
         pitcher_mov_avg = sqlContext.read.parquet(self.rddDir + "/" + "pitcher_moving_averages.parquet")
         pitcher_mov_avg.registerTempTable("pma")
-        pitcher_mov_avg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
         print "pitcher_mov_avg=", pitcher_mov_avg.take(2)
 
         pg = sqlContext.read.parquet(self.rddDir + "/" + "pitcher_games.parquet")
         pg.registerTempTable("pg")
-        pg.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
 
         pitcher_games = sqlContext.sql("select *  \
             from games g    \
@@ -543,7 +510,7 @@ class CreateFeatures(object):
             join weather w on (g.game_id = w.game_id) \
             left outer join pg on (g.game_id = pg.game_id \
                 and gp.player_id = pg.player_id and pg.player_id = pma.player_id ) \
-        ").cache()
+        ")
 #            where pg.is_starter = TRUE \
 
         unique_cols = []
@@ -568,8 +535,7 @@ class CreateFeatures(object):
 
             return Row(**row)
 
-        pitching_features = pitching_features.map(transformPitchers).coalesce(16).toDF()
-        pitching_features.persist(storageLevel=StorageLevel.MEMORY_AND_DISK)
+        pitching_features = pitching_features.map(transformPitchers).toDF()
         print "pitching_features=", pitching_features.columns
         print "pitching_features=", pitching_features.show()
         print "pitching_features count=", pitching_features.count()
@@ -588,8 +554,6 @@ class CreateFeatures(object):
         with open(self.rddDir + "/" + "pitching_features.csv/_header", "w") as text_file:
             text_file.write(",".join(pcsv.columns))
 
-        pitching_features.unpersist()
-        pitcher_mov_avg.unpersist()
 
     def run(self):
         
