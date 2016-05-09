@@ -20,3 +20,6 @@ Set of Spark applications that download MLB events and statistics for creating a
   + movingAverage.sh - Computes multiple moving averages for numerous features
   + encode.sh - Encode categorical variables
   + runml.sh - Run the Spark GradientBoostedTreesModel
+
+# Predicting
++ Support for FanDuel pools is available.  Go to a contest you are interested in, click Download Roster and then run ```fan.sh -p </path/to/file>```
