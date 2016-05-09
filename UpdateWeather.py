@@ -46,7 +46,7 @@ class Weather(AbstractDF):
 
 class UpdateWeather(object):
     # get your API key by registering here: https://developer.forecast.io/
-    _api_key = ''
+    _api_key = '761b6dc9e346da68ac710404b12882dc'
 
     weatherFile = CreateStatsRDD.rddDir + "/" + "weather.json"
 
