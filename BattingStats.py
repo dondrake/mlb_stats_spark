@@ -124,24 +124,24 @@ class BattingStats(object):
         self.out = self.ab - self.total_hits
 
         fantasyPoints = 0.0
-        fantasyPoints += (1.0 * self._1b)
-        fantasyPoints += (2.0 * self._2b)
-        fantasyPoints += (3.0 * self._3b)
-        fantasyPoints += (4.0 * self.hr)
-        fantasyPoints += (1.0 * self.rbi)
-        fantasyPoints += (1.0 * self.r)
-        fantasyPoints += (1.0 * self.bb)
-        fantasyPoints += (2.0 * self.sb)
-        fantasyPoints += (1.0 * self.hbp)
-        fantasyPoints -= (0.25 * self.out)
+        fantasyPoints += (3.0 * self._1b)
+        fantasyPoints += (6.0 * self._2b)
+        fantasyPoints += (9.0 * self._3b)
+        fantasyPoints += (12.0 * self.hr)
+        fantasyPoints += (3.5 * self.rbi)
+        fantasyPoints += (3.2 * self.r)
+        fantasyPoints += (3.0 * self.bb)
+        fantasyPoints += (6.0 * self.sb)
+        fantasyPoints += (3.0 * self.hbp)
+        #fantasyPoints -= (0.25 * self.out)
         #fantasyPoints /= player['G']
         self.fd_points = fantasyPoints
 
-        self.fd_points_2b += (2.0 * self._2b)
-        self.fd_points_3b += (3.0 * self._3b)
-        self.fd_points_hr += (4.0 * self.hr)
-        self.fd_points_sb += (2.0 * self.sb)
-        self.fd_points_out -= (0.25 * self.out)
+        self.fd_points_2b += (6.0 * self._2b)
+        self.fd_points_3b += (9.0 * self._3b)
+        self.fd_points_hr += (12.0 * self.hr)
+        self.fd_points_sb += (6.0 * self.sb)
+        #self.fd_points_out -= (0.25 * self.out)
         self.fd_points_tb += self.bb + self._1b + self.fd_points_2b + self.fd_points_3b + self.fd_points_hr 
 
     @staticmethod

@@ -102,10 +102,10 @@ class PitchingStats(RDDBuilder):
                 ps.num_runs = pitcher['r']
                 ps.fd_points = 0.0
                 if ps.win == 1:
-                    ps.fd_points += 4.0
-                ps.fd_points += ps.innings_pitched
-                ps.fd_points -= int(ps.earned_runs)
-                ps.fd_points += int(ps.strikeouts)
+                    ps.fd_points += 12.0
+                ps.fd_points += 3.0 * ps.innings_pitched
+                ps.fd_points -= 3.0 * int(ps.earned_runs)
+                ps.fd_points += 3.0 * int(ps.strikeouts)
                 if pitcherCount == 0:
                     ps.is_starter = True
                 else:
