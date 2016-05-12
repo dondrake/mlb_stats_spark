@@ -32,7 +32,7 @@ class MLB(object):
 
     def __init__(self, sqlContext, cacheDir, gameDate, isReadOnly = True):
         self.sqlContext = sqlContext
-        self._mlbdb = os.path.abspath(os.path.dirname(__file__)) + '/db/'
+        self._mlbdb = os.path.abspath(os.path.dirname(__file__)) + '/csv/'
         self.log = logging.getLogger(__name__)
         self.cacheDir = cacheDir
         self.gameDate = gameDate
