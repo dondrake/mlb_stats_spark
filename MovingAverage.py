@@ -165,6 +165,14 @@ def calcGroup(tuple):
 
         field = 'mv_' + movingLen + '_' + 'ops'
         metrics[field] = float(obp + slugging)
+
+        #woba
+        woba_num = 0.69 * sums['bb'] + 0.72 * sums['hbp'] + 0.89 * sums['_1b'] + 1.27 * sums['_2b'] + 1.62 * sums['_3b'] + 2.10 * sums['hr']
+        # TODO NEEDS SACRIFICE FLIES
+        woba_den = sums['ab'] + sums['bb'] + sums['hbp']
+        woba = woba_num / float(woba_den)
+        field = 'mv_' + movingLen + '_' + 'woba'
+        metrics[field] = float(woba)
     else:
         # pitcher
         #self.playerStats = set(['fd_points', 'earned_runs', 'hr', 'innings_pitched', 'num_hits', 'num_runs', 'num_pitches', 'num_walks', 'hr', 'num_strikes' ,'win', 'strikeouts', 'batters_faced'])
@@ -188,14 +196,32 @@ def calcGroup(tuple):
         if sums['innings_pitched'] > 0:
             k_per_nine = 9.0 * sums['strikeouts'] / sums['innings_pitched']
             bb_per_nine = 9.0 * sums['num_walks'] / sums['innings_pitched']
+            fip = (13.0 * sums['hr'] + 3.0 * sums['num_walks'] - 2.0 * sums['strikeouts']) / sums['innings_pitched'] + 3.072
         else:
             k_per_nine = 0.0
             bb_per_nine = 0.0
+            fip = 0.0
         field = 'mv_' + movingLen + '_' + 'k_per_nine'
         metrics[field] = float(k_per_nine)
 
         field = 'mv_' + movingLen + '_' + 'bb_per_nine'
         metrics[field] = float(bb_per_nine)
+
+        field = 'mv_' + movingLen + '_' + 'fip'
+        metrics[field] = float(fip)
+
+        if sums['batters_faced'] > 0:
+            k_percent = sums['strikeouts'] / sums['batters_faced']
+            bb_percent = sums['num_walks'] / sums['batters_faced']
+        else:
+            k_percent = 0.0
+            bb_percent = 0.0
+
+        field = 'mv_' + movingLen + '_' + 'k_percent'
+        metrics[field] = float(k_percent)
+
+        field = 'mv_' + movingLen + '_' + 'k_bb'
+        metrics[field] = float(bb_percent)
     #print "metrics=", metrics
     return (playerId + '_' + gdate, metrics)
 
