@@ -143,6 +143,7 @@ class FanDuelGame(object):
                 print player
                 if player['team'] is None:
                     print "NO TEAM: ", fdPlayer['Team']
+                    sys.exit(1)
 
                 playerStatusKey = "{0}_{1}".format(player['name'], player['team'])
 
@@ -169,15 +170,17 @@ class FanDuelGame(object):
                         continue
                 else:
                     # Try to skip non-probable pitchers
-                    if player['position'] == 'P' and player['player_status'] == '':
-                        print "Skipping, not probable pitcher"
-                        continue
-                    elif pStatus['status'] != 'Starter':
-                        print "NOT STARTER, skipping."
-                        continue
-                    elif player['injury'] != '':
-                        print "Skipping, player is injured."
-                        continue
+                    if player['position'] == 'P':
+                        if player['player_status'] == '':
+                            print "Skipping, not probable pitcher"
+                            continue
+                    else:
+                        if pStatus['status'] != 'Starter':
+                            print "NOT STARTER, skipping."
+                            continue
+                        elif player['injury'] != '':
+                            print "Skipping, player is injured."
+                            continue
                 eligiblePlayerKey = "{0}_{1}".format(player['name'], player['team'])
                 self.eligiblePlayers[eligiblePlayerKey] = player
         return self.eligiblePlayers
