@@ -160,7 +160,7 @@ def trainTestSaveFDPointsModel(rddDir, encodedFeaturesParq, featuresNumValsFile)
     # Train a GradientBoostedTrees model.
     #  Notes: (a) Empty categoricalFeaturesInfo indicates all features are continuous.
     #         (b) Use more iterations in practice.
-    model = GradientBoostedTrees.trainRegressor(trainingData, categoricalFeaturesInfo=catFeatures, maxDepth=6, numIterations=32, maxBins=300)
+    model = GradientBoostedTrees.trainRegressor(trainingData, categoricalFeaturesInfo=catFeatures, maxDepth=5, numIterations=100, maxBins=300)
 
     # Evaluate model on test instances and compute test error
     predictions = model.predict(testData.map(lambda x: x.features)).cache()
